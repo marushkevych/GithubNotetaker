@@ -14,8 +14,12 @@ class Dashboard extends React.Component{
 
   render(){
     return View({style: styles.container},
-      Text(null, 'This is Dashboard'),
-      Text(null, this.props.userInfo)
+    	Image({
+    		source: {uri: this.props.userInfo.avatar_url},
+    		style: styles.image
+    	}),
+      	Text(null, 'This is Dashboard'),
+      	Text(null, this.props.userInfo)
     );
   }	
 

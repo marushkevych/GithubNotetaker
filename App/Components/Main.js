@@ -42,7 +42,7 @@ class Main extends React.Component{
       });
       // reset state
       this.setState({
-        username: '',
+        // username: '',
         isLoading: false,
         error: false        
       })
