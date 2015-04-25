@@ -34,7 +34,7 @@ class Main extends React.Component{
 
     // fetch data from Github
     api.getBio(this.state.username).then((res) => {
-      console.log('response', res);
+      // reroute to the next passing that github information
       this.props.navigator.push({
         title: res.name || 'Select an option',
         component: Dashboard,
@@ -53,7 +53,6 @@ class Main extends React.Component{
       })
     });
 
-    // reroute to the next passing that github information
   }
   render(){
     return View({style: styles.mainContainer},
