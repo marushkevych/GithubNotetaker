@@ -50,10 +50,12 @@ class Repositories extends React.Component{
             <TouchableHighlight
               onPress={this.openPage.bind(this, repo.html_url)}
               underlayColor='transparent'>
-              <Text style={styles.name}>{repo.name}</Text>
+              <View>
+                <Text style={styles.name}>{repo.name}</Text>
+                <Text style={styles.stars}>Stars: {repo.stargazers_count}</Text>
+                <Text style={styles.description}>{repo.description}</Text>
+              </View>
             </TouchableHighlight>
-            <Text style={styles.stars}>Stars: {repo.stargazers_count}</Text>
-            <Text style={styles.description}>{repo.description}</Text>
           </View>
           <Separator/>
         </View>
