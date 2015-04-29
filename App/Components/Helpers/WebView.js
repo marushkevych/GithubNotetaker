@@ -11,7 +11,7 @@ class WebViewComponent extends React.Component {
 	render(){
 		return (
 			<View style={styles.container}>
-				<WebView url={this.props.url} />
+				<WebView url={this.props.url} startInLoadingState={true} />
 			</View>
 		)
 	}

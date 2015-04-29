@@ -2,6 +2,7 @@ var React = require('react-native');
 var api = require('../Utils/api');
 var Badge = require('./Badge');
 var Separator = require('./Helpers/Separator');
+var LoadingOverlay = require('./Helpers/LoadingOverlay');
 
 var {
 	View,
@@ -12,38 +13,6 @@ var {
 	TextInput
 } = React;
 
-var styles = StyleSheet.create({
-  container: {
-	flex: 1,
-	flexDirection: 'column',
-  },
-  buttonText: {
-	fontSize: 18,
-	color: 'white'
-  },
-  button: {
-	height: 60,
-	backgroundColor: '#48BBEC',
-	flex: 3,
-	alignItems: 'center',
-	justifyContent: 'center'
-  },
-  searchInput: {
-	height: 60,
-	padding: 10,
-	fontSize: 18,
-	color: '#111',
-	flex: 10
-  },
-  rowContainer: {
-	padding: 10,
-  },
-  footerContainer: {
-	backgroundColor: '#E3E3E3',
-	alignItems: 'center',
-	flexDirection: 'row'
-  }
-});
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -51,10 +20,25 @@ class Notes extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			 dataSource: ds.cloneWithRows(this.props.notes),
+			 dataSource: ds.cloneWithRows({}),
 			 note: '',
-			 error: ''
+			 error: '',
+			 isLoading: true,
 		}
+
+		api.getNotes(this.props.userInfo.login).then((notes) =>{
+			notes = notes || {};
+			this.setState({
+				dataSource: ds.cloneWithRows(notes),
+				isLoading: false
+			})
+		}).catch((err) => {
+			console.log('error', err)
+			this.setState({
+				error: 'Failed to fetch notes',
+				isLoading: false
+			})
+		});         
 
 	}
 	handleChange(e){
@@ -66,13 +50,15 @@ class Notes extends React.Component{
 		var user = this.props.userInfo.login;
 		var note = this.state.note;
 		this.setState({
-			note: ''
+			note: '',
+			isLoading: true
 		});
 
 		api.addNote(user, note).then((res) => {
 			api.getNotes(user).then((notes) =>{
 				this.setState({
-					dataSource: ds.cloneWithRows(notes)
+					dataSource: ds.cloneWithRows(notes),
+					isLoading: false
 				});
 			});
 		}).catch((error) => {
@@ -114,7 +100,7 @@ class Notes extends React.Component{
 				dataSource={this.state.dataSource}
 				renderRow={this.renderRow}
 				renderHeader={() => <Badge userInfo={this.props.userInfo} />} />
-			
+			<LoadingOverlay isVisible={this.state.isLoading} />
 			{this.footer()}
 		</View>
 	  );
@@ -123,10 +109,40 @@ class Notes extends React.Component{
 
 
 Notes.propTypes = {
-	userInfo: React.PropTypes.object.isRequired,
-	notes: React.PropTypes.object.isRequired
+	userInfo: React.PropTypes.object.isRequired
 }
 
 module.exports = Notes;
 
-
+var styles = StyleSheet.create({
+  container: {
+	flex: 1,
+	flexDirection: 'column',
+  },
+  buttonText: {
+	fontSize: 18,
+	color: 'white'
+  },
+  button: {
+	height: 60,
+	backgroundColor: '#48BBEC',
+	flex: 3,
+	alignItems: 'center',
+	justifyContent: 'center'
+  },
+  searchInput: {
+	height: 60,
+	padding: 10,
+	fontSize: 18,
+	color: '#111',
+	flex: 10
+  },
+  rowContainer: {
+	padding: 10,
+  },
+  footerContainer: {
+	backgroundColor: '#E3E3E3',
+	alignItems: 'center',
+	flexDirection: 'row'
+  }
+});

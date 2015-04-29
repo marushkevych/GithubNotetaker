@@ -34,17 +34,11 @@ class Dashboard extends React.Component{
 	}
 
 	goToNotes(){
-		api.getNotes(this.props.userInfo.login).then((notes) =>{
-			notes = notes || {};
-			this.props.navigator.push({
-				title: 'Notes',
-				component: Notes,
-				passProps: {userInfo: this.props.userInfo, notes}
-			});	
-		}).catch((err) => {
-			console.log('error', err)
-		});		
-
+		this.props.navigator.push({
+			title: 'Notes',
+			component: Notes,
+			passProps: {userInfo: this.props.userInfo}
+		});	
 	}
 
 	render(){
