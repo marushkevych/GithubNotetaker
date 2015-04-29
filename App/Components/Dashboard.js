@@ -38,7 +38,7 @@ class Dashboard extends React.Component{
 		this.props.navigator.push({
 			title: 'Notes',
 			component: Notes,
-			passProps: {userInfo: this.props.userInfo}
+			passProps: {userInfo: this.props.userInfo, notes: {}}
 		});	
 
 	}

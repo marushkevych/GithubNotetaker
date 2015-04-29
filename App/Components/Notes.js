@@ -1,44 +1,132 @@
 var React = require('react-native');
+var api = require('../Utils/api');
+var Badge = require('./Badge');
+var Separator = require('./Helpers/Separator');
 
 var {
-  StyleSheet,
+    View,
+    Text,
+    ListView,
+    StyleSheet,
+    TouchableHighlight,
+    TextInput
 } = React;
 
-var ScrollView = React.createFactory(React.ScrollView);
-var Text = React.createFactory(React.Text);
-var Badge = React.createFactory(require('./Badge'));
 
 class Notes extends React.Component{
+	constructor(props){
+		super(props);
+		var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+		this.state = {
+			 dataSource: ds.cloneWithRows(this.props.notes),
+			 note: '',
+			 error: ''
+		}
 
-	render(){
-		return ScrollView({style: styles.container},
-			Badge({userInfo: this.props.userInfo}),
-			Text({style: styles.rowTitle}, 'Notes')
-		);
 	}
+	handleChange(e){
+		this.setState({
+			note: e.nativeEvent.text
+		})
+	}
+	handleSubmit(e){
+		var user = this.props.userInfo.login;
+		var note = this.state.note;
+		this.setState({
+			note: ''
+		});
+
+		api.addNote(user, note).then((res) => {
+			api.getNotes(user).then((notes) =>{
+				console.log('notes', notes)
+				this.setState({
+					dataSource: ds.cloneWithRows(['foo', 'bar'])
+				});
+			});
+		}).catch((error) => {
+			console.log('Request failed', error);
+			this.setState({error})
+		});
+	}
+	footer(){
+		return (
+			<View style={styles.footerContainer}>
+				<TextInput
+					style={styles.searchInput}
+					value={this.state.note}
+					onChange={this.handleChange.bind(this)}
+					placehplder="New Note" />
+				<TouchableHighlight 
+					style={styles.button}
+					onPress={this.handleSubmit.bind(this)}
+					underlayColor="#88D4F5">
+						<Text style={styles.buttonText}>Submit</Text>
+				</TouchableHighlight>
+			</View>
+		)
+	}
+	renderRow(rowData){
+		console.log('rowData', rowData)
+		return (
+			<View>
+				<View style={styles.rowContainer}>
+					<Text>{rowData}</Text>
+				</View>
+				<Separator/>
+			</View>
+		)
+	}
+    render(){
+        return (
+        	<View style={styles.container}>
+        		<ListView
+        			dataSource={this.state.dataSource}
+        			renderRow={this.renderRow}
+        			renderHeader={() => <Badge userInfo={this.props.userInfo} />} />
+            	
+            	{this.footer()}
+            </View>
+        );
+    }
 }
 
-
 module.exports = Notes;
+
+Notes.propTypes = {
+	userInfo: React.PropTypes.object.isRequired,
+	notes: React.PropTypes.object.isRequired
+}
 
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'column',
   },
   buttonText: {
     fontSize: 18,
-    color: 'white',
-    alignSelf: 'center'
+    color: 'white'
+  },
+  button: {
+    height: 60,
+    backgroundColor: '#48BBEC',
+    flex: 3,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  searchInput: {
+    height: 60,
+    padding: 10,
+    fontSize: 18,
+    color: '#111',
+    flex: 10
   },
   rowContainer: {
-    padding: 10
+    padding: 10,
   },
-  rowTitle: {
-    color: '#48BBEC',
-    fontSize: 16
-  },
-  rowContent: {
-    fontSize: 19
+  footerContainer: {
+    backgroundColor: '#E3E3E3',
+    alignItems: 'center',
+    flexDirection: 'row'
   }
 });
