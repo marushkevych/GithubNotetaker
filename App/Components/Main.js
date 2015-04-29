@@ -21,7 +21,6 @@ class Main extends React.Component{
       isLoading: false,
       error: false
     }
-    
   }
   handleChange(event){
     this.setState({

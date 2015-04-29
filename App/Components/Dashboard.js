@@ -1,6 +1,6 @@
 var React = require('react-native');
 var Profile = require('./Profile');
-var Repos = require('./Repos');
+var Repositories = require('./Repositories');
 var Notes = require('./Notes');
 
 var {
@@ -15,6 +15,7 @@ var TouchableHighlight = React.createFactory(React.TouchableHighlight);
 
 class Dashboard extends React.Component{
 
+
 	goToProfile(){
 		this.props.navigator.push({
 			title: 'Profile',
@@ -24,9 +25,10 @@ class Dashboard extends React.Component{
 	}
 
 	goToRepos(){
+
 		this.props.navigator.push({
-			title: 'Repos',
-			component: Repos,
+			title: 'Repositories',
+			component: Repositories,
 			passProps: {userInfo: this.props.userInfo}
 		});	
 
