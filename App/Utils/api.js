@@ -24,7 +24,7 @@ var api = {
 function doFetch(url, conf){
 	return fetch(url, conf).then((res) => {
 		return res.json().then((json) => {
-			if(json.message === 'Not Found'){
+			if(json && json.message === 'Not Found'){
 				throw new Error("Not Found");
 			}
 			return json;	

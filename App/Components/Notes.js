@@ -71,7 +71,6 @@ class Notes extends React.Component{
 
 		api.addNote(user, note).then((res) => {
 			api.getNotes(user).then((notes) =>{
-				console.log('notes', notes)
 				this.setState({
 					dataSource: ds.cloneWithRows(notes)
 				});
@@ -82,7 +81,6 @@ class Notes extends React.Component{
 		});
 	}
 	renderRow(rowData){
-		console.log('rowData', rowData)
 		return (
 			<View>
 				<View style={styles.rowContainer}>
